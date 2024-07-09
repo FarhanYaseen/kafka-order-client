@@ -21,9 +21,11 @@ const OrderForm = () => {
     onSubmit: async (values, { setSubmitting, resetForm, setStatus }) => {
       try {
         const response = await createOrder(values);
-        setStatus({ success: response });
+        console.log("Order created successfully:", response);
+        setStatus({ success: "Order created successfully!" });
         resetForm();
       } catch (error) {
+        console.error("Error creating order:", error);
         setStatus({ error: error.message });
       }
       setSubmitting(false);
@@ -92,9 +94,16 @@ const OrderForm = () => {
         </form>
         {formik.status && (
           <Box sx={{ mt: 3 }}>
-            <Typography variant="body1" color="textSecondary">
-              {formik.status.success || formik.status.error}
-            </Typography>
+            {formik.status.success && (
+              <Typography variant="body1" style={{ color: "green" }}>
+                {formik.status.success}
+              </Typography>
+            )}
+            {formik.status.error && (
+              <Typography variant="body1" style={{ color: "red" }}>
+                {formik.status.error}
+              </Typography>
+            )}
           </Box>
         )}
       </Box>
