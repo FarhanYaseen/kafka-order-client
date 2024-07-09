@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import { createOrder } from "../api/orderService";
 import { TextField, Button, Typography, Container, Box } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -20,14 +20,11 @@ const OrderForm = () => {
     }),
     onSubmit: async (values, { setSubmitting, resetForm, setStatus }) => {
       try {
-        const response = await axios.post(
-          "http://localhost:3000/order",
-          values
-        );
-        setStatus({ success: response.data });
+        const response = await createOrder(values);
+        setStatus({ success: response });
         resetForm();
       } catch (error) {
-        setStatus({ error: "Failed to send order" });
+        setStatus({ error: error.message });
       }
       setSubmitting(false);
     },
