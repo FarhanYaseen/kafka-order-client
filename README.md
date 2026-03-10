@@ -12,7 +12,7 @@ A React front-end for submitting and tracking orders, backed by the Kafka Order 
 ## Prerequisites
 
 - Node.js 18+
-- [kafka-order-backend](../kafka-order-backend) running on port 3000
+- [kafka-order-backend](https://github.com/FarhanYaseen/kafka-order-backend) running on port 3000
 
 ## Getting Started
 
