@@ -8,6 +8,7 @@ import {
   Box,
   CircularProgress,
   Grid,
+  Alert,
 } from "@mui/material";
 import { Skeleton } from "@mui/lab";
 import { useFormik } from "formik";
@@ -27,16 +28,15 @@ const OrderForm = () => {
         .required("Total is required")
         .positive("Total must be a positive number"),
     }),
-    onSubmit: async (values, { setSubmitting, setStatus }) => {
+    onSubmit: async (values, { setSubmitting, setStatus, resetForm }) => {
       setSubmitting(true);
-      setStatus({ success: "", error: "" });
+      setStatus(null);
       try {
         const response = await createOrder(values);
-        console.log("Order created successfully:", response);
-        setStatus({ success: "Order created successfully!" });
+        setStatus({ success: true, message: "Order submitted successfully!", orderId: response.order?.orderId });
+        resetForm();
       } catch (error) {
-        console.error("Error creating order:", error);
-        setStatus({ error: error.message });
+        setStatus({ success: false, message: error.message });
       }
       setSubmitting(false);
     },
@@ -46,7 +46,7 @@ const OrderForm = () => {
     <Container maxWidth="md">
       <Box sx={{ mt: 5, mb: 3 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Order Form
+          Place an Order
         </Typography>
         {!formik.isSubmitting && (
           <form style={{ minWidth: "60%" }} onSubmit={formik.handleSubmit}>
@@ -59,13 +59,8 @@ const OrderForm = () => {
                 value={formik.values.customerName}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={
-                  formik.touched.customerName &&
-                  Boolean(formik.errors.customerName)
-                }
-                helperText={
-                  formik.touched.customerName && formik.errors.customerName
-                }
+                error={formik.touched.customerName && Boolean(formik.errors.customerName)}
+                helperText={formik.touched.customerName && formik.errors.customerName}
               />
             </Box>
             <Box sx={{ mb: 2 }}>
@@ -83,10 +78,12 @@ const OrderForm = () => {
             </Box>
             <Box sx={{ mb: 2 }}>
               <TextField
-                label="Total"
+                label="Total ($)"
                 fullWidth
                 variant="outlined"
                 name="total"
+                type="number"
+                inputProps={{ min: 0, step: "0.01" }}
                 value={formik.values.total}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -102,9 +99,7 @@ const OrderForm = () => {
                     color="primary"
                     type="submit"
                     disabled={formik.isSubmitting}
-                    startIcon={
-                      formik.isSubmitting && <CircularProgress size={24} />
-                    }
+                    startIcon={formik.isSubmitting && <CircularProgress size={20} />}
                   >
                     {formik.isSubmitting ? "Submitting..." : "Submit Order"}
                   </Button>
@@ -112,12 +107,12 @@ const OrderForm = () => {
                 {formik.dirty && (
                   <Grid item xs={4}>
                     <Button
-                      variant="contained"
+                      variant="outlined"
                       color="secondary"
                       onClick={() => formik.resetForm()}
                       disabled={formik.isSubmitting}
                     >
-                      Reset Form
+                      Reset
                     </Button>
                   </Grid>
                 )}
@@ -125,25 +120,23 @@ const OrderForm = () => {
             </Box>
           </form>
         )}
-        {formik.status && (
-          <Box sx={{ mt: 3 }}>
-            {formik.status.success && (
-              <Typography variant="body1" style={{ color: "green" }}>
-                {formik.status.success}
-              </Typography>
-            )}
-            {formik.status.error && (
-              <Typography variant="body1" style={{ color: "red" }}>
-                {formik.status.error}
-              </Typography>
-            )}
-          </Box>
-        )}
         {formik.isSubmitting && (
           <Box sx={{ mt: 3 }}>
             <Skeleton variant="rectangular" height={118} />
             <Skeleton />
             <Skeleton width="60%" />
+          </Box>
+        )}
+        {formik.status && (
+          <Box sx={{ mt: 3 }}>
+            <Alert severity={formik.status.success ? "success" : "error"}>
+              {formik.status.message}
+              {formik.status.orderId && (
+                <Typography variant="body2" sx={{ mt: 0.5 }}>
+                  Order ID: <strong>{formik.status.orderId}</strong>
+                </Typography>
+              )}
+            </Alert>
           </Box>
         )}
       </Box>

@@ -1,103 +1,79 @@
 # Kafka Order Client
 
-This project is a React client application that handles an order form. It sends requests to the backend to manage the order system using Kafka.
+A React front-end for submitting and tracking orders, backed by the Kafka Order Backend.
 
-## Table of Contents
+## Tech Stack
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Features](#features)
-- [Contributing](#contributing)
-- [License](#license)
+- **React 18** — UI framework
+- **Material UI (MUI 5)** — Component library
+- **Formik** + **Yup** — Form management and validation
+- **Axios** — HTTP client
 
-## Installation
+## Prerequisites
 
-1. **Clone the repository:**
+- Node.js 18+
+- [kafka-order-backend](../kafka-order-backend) running on port 3000
 
-   ```bash
-   git clone https://github.com/your-username/kafka-order-client.git
-   cd kafka-order-client
-   ```
+## Getting Started
 
-2. **Install dependencies:**
+### 1. Install dependencies
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
-## Usage
+### 2. Configure environment
 
-1. **Start the development server:**
+```bash
+cp .env.example .env
+```
 
-   ```bash
-   npm start
-   ```
+| Variable | Default | Description |
+|---|---|---|
+| `REACT_APP_API_URL` | `http://localhost:3000` | Backend API base URL |
 
-2. **Open your browser and navigate to:**
+### 3. Start the development server
 
-   ```
-   http://localhost:3000
-   ```
+```bash
+npm start
+```
+
+Opens at [http://localhost:3001](http://localhost:3001).
+
+### 4. Production build
+
+```bash
+npm run build
+```
+
+Output is in the `build/` directory, ready to be served by any static file server (Nginx, S3, Vercel, etc.).
 
 ## Project Structure
 
 ```
 kafka-order-client/
 ├── public/
-│ ├── index.html
-│ └── ...
+│   └── index.html              # HTML template
 ├── src/
-│ ├── components/
-│ │ ├── OrderForm.js
-│ │ └── ...
-│ ├── services/
-│ │ ├── api.js
-│ │ └── ...
-│ ├── App.js
-│ ├── index.js
-│ └── ...
-├── package.json
-└── README.md
+│   ├── api/
+│   │   └── orderService.js     # Axios calls to the backend API
+│   ├── components/
+│   │   └── OrderForm.js        # Order form with validation and feedback
+│   ├── App.js                  # Root component
+│   └── index.js                # React DOM entry point
+├── .env.example                # Environment variable template
+└── package.json
 ```
-
-- `public/`: Contains the HTML file so you can tweak it, but you probably won’t need to.
-- `src/`: Contains the JavaScript files where you will write your components and services.
-  - `components/`: Contains React components, such as the OrderForm.
-  - `services/`: Contains API services to handle requests to the backend.
-- `package.json`: Contains project metadata and dependencies.
 
 ## Features
 
-- **Order Form**: A form for users to place orders.
-- **Backend Integration**: Sends order data to the backend to handle the order system using Kafka.
+- **Order form** — customer name, items, and total with client-side validation
+- **Real-time feedback** — success alert with order ID, or descriptive error from the API
+- **Loading state** — skeleton animation while the request is in flight
+- **Environment-based config** — API URL set via `REACT_APP_API_URL`, no hardcoded URLs
 
-## Contributing
+## Running Tests
 
-1. **Fork the repository**
-
-2. **Create a new branch**
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-3. **Make your changes**
-
-4. **Commit your changes**
-
-   ```bash
-   git commit -m 'Add some feature'
-   ```
-
-5. **Push to the branch**
-
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-6. **Create a pull request**
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```bash
+npm test
+```
